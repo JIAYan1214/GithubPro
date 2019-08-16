@@ -1,4 +1,6 @@
-import React,{useState, useEffect,useReducer} from 'react';
+import React,{useState, useEffect,useReducer,useContext} from 'react';
+import MyContext from  '../../lib/MyContext';
+/*
 class MyCount extends React.Component{
     state = {
         count : 0
@@ -23,6 +25,7 @@ class MyCount extends React.Component{
         )
     }
 }
+*/
 
 function countReducer(state,action){
     switch(action.type){
@@ -39,14 +42,25 @@ function MyCountFun(){
     //useState 会返回一对值：当前状态和一个让你更新它的函数，
     //useState(0):参数是初始值（第一次渲染用到），这个初始值和this.state不同的是，它不一定是一个对象。
     //const [count, setCount] = useState(0);//state hook方法，一个组件中多次使用 State Hook:
-    const [count,dispatchCount] = useReducer(countReducer,0);//返回[初始值，reducer函数]
+    const [count,dispatchCount] = useReducer(countReducer,20);//返回[初始值，reducer函数]
+    const  [name,setName] = useState('hello');
+    const context = useContext(MyContext);
+    // useEffect(()=>{
+    //     const interval=setInterval(()=>{
+    //         //setCount(c=>c+1);
+    //         dispatchCount({type:'minus'})
+    //     },1000);
+    //     return ()=>clearInterval(interval);
+    // },[]);
+    //[]可选参数：
     useEffect(()=>{
-        const interval=setInterval(()=>{
-            //setCount(c=>c+1);
-            dispatchCount({type:'add'})
-        },1000);
-        return ()=>clearInterval(interval);
+        console.log('effect invoke');
+        return ()=>console.log('effect delete');
     },[]);
-    return <span>{count}</span>
+    return <div>
+        <input value={name} onChange={(e)=>setName(e.target.value)}/>
+        <button onClick={()=>dispatchCount({type:'add'})}>{count}</button>
+        <p>{context}</p>
+    </div>
 }
 export default MyCountFun;

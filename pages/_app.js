@@ -9,6 +9,7 @@
 import App,{Container} from 'next/app';
 import React from 'react';
 import Layout from '../components/Layout';
+import MyContext from '../lib/MyContext';
 
 import 'antd/dist/antd.css';
 
@@ -27,7 +28,10 @@ class MyApp extends App{
         return (
             <Container>
                 <Layout>
-                    <Component {...pageProps}/>
+                    <MyContext.Provider value="test">
+                        <Component {...pageProps}/>
+                    </MyContext.Provider>
+
                 </Layout>
             </Container>
         )
