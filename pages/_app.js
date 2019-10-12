@@ -8,9 +8,11 @@
  */
 import App,{Container} from 'next/app';
 import React from 'react';
+import  {Provider} from 'react-redux';
 import Layout from '../components/Layout';
 import MyContext from '../lib/MyContext';
 
+import store from './store/store';
 import 'antd/dist/antd.css';
 
 class MyApp extends App{
@@ -28,10 +30,11 @@ class MyApp extends App{
         return (
             <Container>
                 <Layout>
+                    <Provider store={store}>
                     <MyContext.Provider value="test">
                         <Component {...pageProps}/>
                     </MyContext.Provider>
-
+                    </Provider>
                 </Layout>
             </Container>
         )
