@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import Router from 'next/router'
 import {connect} from 'react-redux';
-import {Button} from 'antd';
-import store from './store/store.js';
+import {add} from '../store/store';
 
 //router变化钩子函数
 const  events = [
@@ -32,6 +31,10 @@ const Index=({count,username,add,rename})=>{
         </p>
 
     </>
+}
+Index.getInitialProps= async ({reduxStore})=>{
+    reduxStore.dispatch(add(3));
+    return {}
 }
 export default connect(function mapStateToProps(state) {
     return {

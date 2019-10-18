@@ -12,12 +12,14 @@ import  {Provider} from 'react-redux';
 import Layout from '../components/Layout';
 import MyContext from '../lib/MyContext';
 
-import store from './store/store';
+// import store from '../store/store';
+import WithRedux from '../lib/with-redux';
 import 'antd/dist/antd.css';
 
 class MyApp extends App{
     //每次页面切换都执行此方法
-    static async getInitialProps({Component,router,ctx}){
+    static async getInitialProps(ctx){
+        const {Component} = ctx;
         let pageProps={};
         if(Component.getInitialProps){
             pageProps = await Component.getInitialProps(ctx);
@@ -26,11 +28,11 @@ class MyApp extends App{
     }
 
     render(){
-        const { Component,pageProps } = this.props;
+        const { Component,pageProps,reduxStore } = this.props;
         return (
             <Container>
                 <Layout>
-                    <Provider store={store}>
+                    <Provider store={reduxStore}>
                     <MyContext.Provider value="test">
                         <Component {...pageProps}/>
                     </MyContext.Provider>
@@ -41,4 +43,4 @@ class MyApp extends App{
     }
 }
 
-export default MyApp;
+export default WithRedux(MyApp);
