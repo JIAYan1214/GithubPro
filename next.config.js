@@ -1,4 +1,5 @@
 const withCss = require('@zeit/next-css');
+const config = require('./config');
 
 const configs = {
     // 编译文件的输出目录
@@ -50,6 +51,9 @@ const configs = {
 if(typeof require!=='undefined'){
     require.extensions['.css'] = file=>{}
 }
+
+const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize';
+const SCOPE = 'user';
 //如果引用多个包，这里可以连环调用eg：withLess（withCss({})）
 module.exports = withCss(
     {
@@ -63,6 +67,9 @@ module.exports = withCss(
         // 在服务端渲染和客户端渲染都可获取的配置
         publicRuntimeConfig: {
             staticFolder: '/static',
-        },                                               // 这里配置了之后才会生效
+            GITHUB_OAUTH_URL,
+            OAUTH_URL:`${GITHUB_OAUTH_URL}?client_id=${config.github.client_id}&scope=${SCOPE}`
+        },// 这里配置了之后才会生效
+
     }
 );
