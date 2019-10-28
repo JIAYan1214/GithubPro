@@ -8,7 +8,6 @@ module.exports =(server)=>{
     server.use(async(ctx,next)=>{
         if(ctx.path==='/auth'){
             const code =ctx.query.code;
-            console.log(code)
             if(!code){
                 ctx.body = 'code not exist';
             }
@@ -26,11 +25,22 @@ module.exports =(server)=>{
             })
             console.log(result.status,result.data)
             //
-            if(result.code===200&&(result.data&&!result.data.error)){
+            if(result.status===200&&(result.data&&!result.data.error)){
                 ctx.session.githubAuth = result.data;
+                const {access_token,token_type} = result.data;
 
-                //
+                //用户信息
+                const userInfo = await axios({
+                    method:'GET',
+                    url:"https://api.github.com/user",
+                    headers:{
+                        'Authorization':`${token_type} ${access_token}`
+                    }
+                })
 
+                // console.log(userInfo.data)
+
+                ctx.session.userInfo = userInfo.data;
                 ctx.redirect('/');
             }else{
                 const errorMsg = result.data&&result.data.error;

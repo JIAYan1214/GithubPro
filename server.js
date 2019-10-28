@@ -45,7 +45,26 @@ app.prepare().then(() => {
         });
         ctx.respond = false;
     });
-    router.get('/delete/user', async (ctx) => {
+    /**
+     * 2.增加一个api获取用户info
+     */
+    router.get('/api/user/info', async (ctx) => {
+        const user = ctx.session.userInfo;
+        if(!user){
+            ctx.status = 401;
+            ctx.body = '用户需要先登录';
+        }else {
+            ctx.body = user;
+            ctx.set('Content-type','application/json');
+        }
+
+
+
+    });
+    /***
+     * 1.测试获取用户信息--begin
+     */
+    /*router.get('/delete/user', async (ctx) => {
         ctx.session = null;
         ctx.body = 'set session success';
     });
@@ -56,8 +75,10 @@ app.prepare().then(() => {
             age: 20
         };
         ctx.body = 'set session success';
-    });
-
+    });*/
+    /***
+     * 测试获取用户信息--end
+     */
     server.use(router.routes());
 
     //koa中间键 核心方法

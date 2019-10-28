@@ -1,4 +1,6 @@
-import Link from 'next/link';
+import { useEffect } from 'react';
+import axios from 'axios';
+
 import Router from 'next/router'
 import {connect} from 'react-redux';
 import {add} from '../store/store';
@@ -26,7 +28,14 @@ events.forEach(event=>{
     Router.events.on(event,makeEvent(event))
 })
 const Index=({count,username,add,rename})=>{
-    console.log(publicRuntimeConfig)
+    console.log(publicRuntimeConfig);
+
+    useEffect(()=>{
+        axios.get('/api/user/info').then(res=>{
+            console.log(res)
+        })
+    },[])
+
     return <>
         <p><input value={username} onChange={e=>rename(e.target.value)}/></p>
         <div><button onClick={e=>add(count+1)}>add count</button></div>
