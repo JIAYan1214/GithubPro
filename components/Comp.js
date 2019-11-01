@@ -1,1 +1,1 @@
-export default (Children)=><span>lazy component</span>
+export default ({color,children,style})=>(<div style={{color,...style}}>{children}</div>)

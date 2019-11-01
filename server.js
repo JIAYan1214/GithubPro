@@ -5,6 +5,8 @@ const session = require('koa-session')
 const Redis = require('ioredis')
 //auth授权
 const auth = require('./server/auth');
+//git api
+const api = require('./server/api');
 
 const RedisSessionStore = require('./server/session-store');
 
@@ -28,10 +30,10 @@ app.prepare().then(() => {
     server.use(session(SESSION_CONFIG, server))
     //处理github oAuth登录
     auth(server);
-
+    api(server);
 
     server.use(async (ctx,next)=>{
-        console.log('session is:',ctx.session)
+        // console.log('session is:',ctx.session)
         await next();
     })
 
@@ -84,6 +86,8 @@ app.prepare().then(() => {
     //koa中间键 核心方法
     server.use(async (ctx, next) => {
         // ctx.cookies.set('id','userid:xxxx')
+        //
+        ctx.req.session = ctx.session;
         await handle(ctx.req, ctx.res);
         ctx.respond = false
     })
