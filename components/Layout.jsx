@@ -1,7 +1,7 @@
 import {Layout} from 'antd';
 import Container from './Container';
 import LayoutHeader from './LayoutHeader';
-
+import { withRouter } from 'next/router'
 import Comp from './Comp';
 
 const  {Content,Footer} = Layout;
@@ -40,9 +40,12 @@ function LayoutWrapper ({children}) {
                 .ant-layout-header{
                     padding:0;
                 }
+                .ant-layout-content{
+                    background-color:#fff;
+                }
                 `
             }
         </style>
     </Layout>)
 }
-export default LayoutWrapper;
+export default withRouter(LayoutWrapper);
