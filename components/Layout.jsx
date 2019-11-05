@@ -19,7 +19,7 @@ function LayoutWrapper ({children}) {
             cloneElement：copy一个Element
 
             */}
-            <Container render={<Comp color="red" style={{fontSize:20}}/>}>{children}</Container>
+            <Container render={<Comp />}>{children}</Container>
         </Content>
         <Footer style={footerSty}>Develop By Yan@<a href="mailto:2056587192@qq.com">2056587192@qq.com</a></Footer>
 

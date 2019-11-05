@@ -7,6 +7,8 @@ const Redis = require('ioredis')
 const auth = require('./server/auth');
 //git api
 const api = require('./server/api');
+//post请求的数据处理；
+const KoaBody = require('koa-body');
 
 const RedisSessionStore = require('./server/session-store');
 
@@ -22,6 +24,9 @@ app.prepare().then(() => {
     const server = new Koa();
     const router = new Router();
     server.keys = ['YAN develop github App'];
+    //post请求的数据处理；
+    //ctx的request中可以获取到请求的body
+    server.use(KoaBody());
     const SESSION_CONFIG = {
         key: 'Yan',
         // maxAge:10*1000,//过期时间

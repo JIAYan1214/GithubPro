@@ -10,9 +10,6 @@ import App ,{Container} from 'next/app';
 import React from 'react';
 import  {Provider} from 'react-redux';
 import Router from 'next/router';
-import Link from 'next/Link';
-
-import axios from 'axios';
 
 import LayoutWrapper from '../components/Layout';
 import WithRedux from '../lib/with-redux';
@@ -66,12 +63,6 @@ class MyApp extends App {
                         this.state.loading ? <PageLoading/> :null
                     }
                     <LayoutWrapper>
-                        <Link href="/">
-                            <a>index</a>
-                        </Link>
-                        <Link href="/detail">
-                            <a>detail</a>
-                        </Link>
                         <Component {...pageProps} />
                     </LayoutWrapper>
                 </Provider>
