@@ -58,3 +58,14 @@ const value = useContext(MyContext);
 接收一个context对象（react.createContext()的返回值），并返回当前context的值。当前context值是有上层距离最近的组件<MyContext.Provider> 的 value prop 决定。
 useContext 的参数必须是 context 对象本身：useContext(MyContext)
 
+#### 数据缓存
+> 1.增加yarn add lru-cache;
+> 
+> 2.引入lru，创建lru实例
+  `const cache = new LRU({
+      maxAge:1000*60*10,//缓存10分钟
+  })
+  `<br/>
+  set,get设置获取
+  
+>

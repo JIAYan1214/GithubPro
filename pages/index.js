@@ -3,8 +3,14 @@ import {Icon,Tabs} from 'antd';
 import getConfig from 'next/config';
 import {connect} from 'react-redux';
 import Router,{ withRouter } from 'next/router';
+//缓存
+import LRU from 'lru-cache';
 //仓库概述组件
 import Repo from '../components/Repo';
+
+const cache = new LRU({
+    maxAge:1000*10,//缓存10分钟
+})
 
 const api = require('../lib/api');
 const {publicRuntimeConfig} = getConfig();
@@ -59,8 +65,14 @@ let cachedUserRepos,cachedUserStarredRepos;
 
      useEffect(()=>{
          if(!isServer){
-             cachedUserRepos = userRepos;
-             cachedUserStarredRepos = userStarredRepos;
+             // cachedUserRepos = userRepos;
+             // cachedUserStarredRepos = userStarredRepos;
+             if(userRepos){
+                 cache.set('userRepos',userRepos);
+             }
+             if(userStarredRepos){
+                 cache.set('userStarredRepos',userStarredRepos);
+             }
          }
      },[])
 
@@ -153,13 +165,20 @@ let cachedUserRepos,cachedUserStarredRepos;
      //不是服务端渲染的时候，进行存储，因为node环境下，会共享全局变量。
      if(!isServer){
          //如果有暂存的数据则
-         if(cachedUserRepos&& cachedUserStarredRepos){
+         if(cache.get('userRepos')&&cache.get('userStarredRepos')){
+             return{
+                 isLogin:true,
+                 userRepos:cache.get('userRepos'),
+                 userStarredRepos:cache.get('userStarredRepos')
+             }
+         }
+         /*if(cachedUserRepos&& cachedUserStarredRepos){
              return{
                  isLogin:true,
                  userRepos:cachedUserRepos,
                  userStarredRepos:cachedUserStarredRepos
              }
-         }
+         }*/
      }
 
 
