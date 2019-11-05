@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {Icon,Tabs} from 'antd';
 import getConfig from 'next/config';
 import {connect} from 'react-redux';
@@ -7,6 +8,11 @@ import Repo from '../components/Repo';
 
 const api = require('../lib/api');
 const {publicRuntimeConfig} = getConfig();
+//判断是否是服务端渲染
+const isServer = typeof window==='undefined';
+
+//缓存数据
+let cachedUserRepos,cachedUserStarredRepos;
  function Index({userRepos,userStarredRepos,user,router}) {
      const tabsKey = router.query.key || '1';
      if(!user || !user.id){
@@ -50,6 +56,14 @@ const {publicRuntimeConfig} = getConfig();
      const handleTabsEvent = (tabsKey)=>{
          Router.push(`/?key=${tabsKey}`)
      };
+
+     useEffect(()=>{
+         if(!isServer){
+             cachedUserRepos = userRepos;
+             cachedUserStarredRepos = userStarredRepos;
+         }
+     },[])
+
      return(
          <div className="root">
              <div className="user-info">
@@ -67,12 +81,12 @@ const {publicRuntimeConfig} = getConfig();
                  <Tabs defaultActiveKey={tabsKey} animated={false} onChange={handleTabsEvent}>
                      <Tabs.TabPane tab="仓库" key="1">
                          {
-                             userRepos.map((item, ind) => <Repo repo={item} key={ind}/>)
+                             userRepos.map((item, ind) => <Repo repo={item} key={item.id}/>)
                          }
                      </Tabs.TabPane>
                      <Tabs.TabPane tab="关注的仓库" key="2">
                          {
-                             userStarredRepos.map((item, ind) => <Repo repo={item} key={ind}/>)
+                             userStarredRepos.map((item, ind) => <Repo repo={item} key={item.id}/>)
                          }
                      </Tabs.TabPane>
                  </Tabs>
@@ -117,6 +131,7 @@ const {publicRuntimeConfig} = getConfig();
          </div>
      )
  }
+
  //getInitialProps页面进入的时候，调用
  Index.getInitialProps = async({ctx,reduxStore})=> {
      /*const result = axios.get('/github/search/repositories?q=react').then(res=>{
@@ -135,21 +150,36 @@ const {publicRuntimeConfig} = getConfig();
              isLogin:false
          }
      }
+     //不是服务端渲染的时候，进行存储，因为node环境下，会共享全局变量。
+     if(!isServer){
+         //如果有暂存的数据则
+         if(cachedUserRepos&& cachedUserStarredRepos){
+             return{
+                 isLogin:true,
+                 userRepos:cachedUserRepos,
+                 userStarredRepos:cachedUserStarredRepos
+             }
+         }
+     }
+
+
+
      //用户所有的仓库
      const userRepos = await api.request({url:`/user/repos`},ctx.req,ctx.res);
      //自己创建的仓库
      const userStarredRepos = await api.request({url:`/user/starred`},ctx.req,ctx.res);
+
      return {
          isLogin:true,
          userRepos:userRepos.data,
          userStarredRepos:userStarredRepos.data
      }
  }
-export default connect(
+export default withRouter(connect(
     function mapState(state) {
         console.log(state)
         return {
             user:state.user
         }
     }
-)(withRouter(Index));
+)(Index));
