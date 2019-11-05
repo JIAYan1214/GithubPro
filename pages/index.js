@@ -1,14 +1,14 @@
-import {Icon} from 'antd';
+import {Icon,Tabs} from 'antd';
 import getConfig from 'next/config';
 import {connect} from 'react-redux';
-
+import Router,{ withRouter } from 'next/router';
 //仓库概述组件
 import Repo from '../components/Repo';
 
 const api = require('../lib/api');
 const {publicRuntimeConfig} = getConfig();
- function Index({userRepos,userStarredRepos,user}) {
-     // console.log(userStarredRepos,isLogin)
+ function Index({userRepos,userStarredRepos,user,router}) {
+     const tabsKey = router.query.key || '1';
      if(!user || !user.id){
          return (
              <div className="root">
@@ -47,6 +47,9 @@ const {publicRuntimeConfig} = getConfig();
              </div>
          )
      }
+     const handleTabsEvent = (tabsKey)=>{
+         Router.push(`/?key=${tabsKey}`)
+     };
      return(
          <div className="root">
              <div className="user-info">
@@ -60,9 +63,19 @@ const {publicRuntimeConfig} = getConfig();
                  </p>
              </div>
              <div className={"user-repos"}>
-                 {
-                     userRepos.map((item, ind) => <Repo repo={item} key={ind}/>)
-                 }
+
+                 <Tabs defaultActiveKey={tabsKey} animated={false} onChange={handleTabsEvent}>
+                     <Tabs.TabPane tab="仓库" key="1">
+                         {
+                             userRepos.map((item, ind) => <Repo repo={item} key={ind}/>)
+                         }
+                     </Tabs.TabPane>
+                     <Tabs.TabPane tab="关注的仓库" key="2">
+                         {
+                             userStarredRepos.map((item, ind) => <Repo repo={item} key={ind}/>)
+                         }
+                     </Tabs.TabPane>
+                 </Tabs>
              </div>
              <style jsx>
                  {`
@@ -139,4 +152,4 @@ export default connect(
             user:state.user
         }
     }
-)(Index);
+)(withRouter(Index));
