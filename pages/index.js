@@ -9,7 +9,7 @@ import LRU from 'lru-cache';
 import Repo from '../components/Repo';
 
 const cache = new LRU({
-    maxAge:1000*10,//缓存10分钟
+    maxAge:1000*60*10,//缓存10分钟
 })
 
 const api = require('../lib/api');
@@ -18,7 +18,7 @@ const {publicRuntimeConfig} = getConfig();
 const isServer = typeof window==='undefined';
 
 //缓存数据
-let cachedUserRepos,cachedUserStarredRepos;
+// let cachedUserRepos,cachedUserStarredRepos;
  function Index({userRepos,userStarredRepos,user,router}) {
      const tabsKey = router.query.key || '1';
      if(!user || !user.id){
@@ -196,7 +196,7 @@ let cachedUserRepos,cachedUserStarredRepos;
  }
 export default withRouter(connect(
     function mapState(state) {
-        console.log(state)
+        // console.log(state)
         return {
             user:state.user
         }
