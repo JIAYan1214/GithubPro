@@ -1,10 +1,10 @@
-import { memo,isValidElement } from 'react';
+import { useEffect,memo,isValidElement } from 'react';
 import {withRouter} from 'next/router';
 import { Row,Col,List ,Pagination} from 'antd';
 import Link from 'next/Link';
 //仓库概述组件
 import Repo from '../components/Repo';
-
+import {cacheArray} from '../lib/repo-basic-cache';
 
 const api = require('../lib/api');
 /**
@@ -14,9 +14,10 @@ const api = require('../lib/api');
  * page分页
  */
 const LANGUAGES = ['JavaScript','HTML','CSS','TypeScript','Java','Ruby','C#'];
-const SORT_TYPES=[{
+const SORT_TYPES=[
+    {
     name:'Best Match'
-},
+    },
     {
         name:'Most Stars',
         value:'stars',
@@ -66,9 +67,16 @@ const FilterLink = memo(({name,query,lang,sort,order,page})=>{
         }
     </Link>
 })
-
+const isServer = typeof window==='undefined';
 function Search({router,repos}) {
     // console.log('search--router',router);
+    //数据缓存--begin
+    useEffect(()=>{
+        if(!isServer){
+            cacheArray(repos.items);
+        }
+    },[])
+    //数据缓存--end
     const { ...querys } = router.query;
     const { lang, sort, order, page } = router.query
     return(

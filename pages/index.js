@@ -7,7 +7,7 @@ import Router,{ withRouter } from 'next/router';
 import LRU from 'lru-cache';
 //仓库概述组件
 import Repo from '../components/Repo';
-
+import {cacheArray} from '../lib/repo-basic-cache';
 const cache = new LRU({
     maxAge:1000*60*10,//缓存10分钟
 })
@@ -21,6 +21,24 @@ const isServer = typeof window==='undefined';
 // let cachedUserRepos,cachedUserStarredRepos;
  function Index({userRepos,userStarredRepos,user,router}) {
      const tabsKey = router.query.key || '1';
+     useEffect(()=>{
+         if(!isServer){
+             // cachedUserRepos = userRepos;
+             // cachedUserStarredRepos = userStarredRepos;
+             if(userRepos){
+                 cache.set('userRepos',userRepos);
+             }
+             if(userStarredRepos){
+                 cache.set('userStarredRepos',userStarredRepos);
+             }
+         }
+     },[]);
+     useEffect(()=>{
+         if(!isServer){
+             cacheArray(userRepos);
+             cacheArray(userStarredRepos);
+         }
+     })
      if(!user || !user.id){
          return (
              <div className="root">
@@ -62,19 +80,6 @@ const isServer = typeof window==='undefined';
      const handleTabsEvent = (tabsKey)=>{
          Router.push(`/?key=${tabsKey}`)
      };
-
-     useEffect(()=>{
-         if(!isServer){
-             // cachedUserRepos = userRepos;
-             // cachedUserStarredRepos = userStarredRepos;
-             if(userRepos){
-                 cache.set('userRepos',userRepos);
-             }
-             if(userStarredRepos){
-                 cache.set('userStarredRepos',userStarredRepos);
-             }
-         }
-     },[])
 
      return(
          <div className="root">
