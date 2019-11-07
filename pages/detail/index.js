@@ -1,13 +1,25 @@
+import dynamic from 'next/dynamic';
+
 import withRepoBasic from '../../components/with-repo-basic';
 
-function Detail({test}){
+import api from '../../lib/api';
+const MarkdownRender = dynamic(
+    ()=>import('../../components/MarkdownRender'),
+    // {
+    //    loading:()=><p>loading...</p>//加载异步组件的时候，给用户友好提示
+    // }
+);
+
+function Detail({readme}){
     return(
-        <span>detail Index{test}</span>
+        <MarkdownRender content={readme.content} isBase64={true}/>
     )
 }
-Detail.getInitialProps = async({ctx})=>{
+Detail.getInitialProps = async({ctx:{query,req,res}})=>{
+
+    const readmeRes = await api.request({url:`/repos/${query.owner}/${query.name}/readme`},req,res);
     return {
-        test:123
+        readme:readmeRes.data
     }
 }
 

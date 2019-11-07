@@ -1,4 +1,9 @@
+const webpack = require('webpack')
+
 const withCss = require('@zeit/next-css');
+//打包解析
+const withBundleAnalyzer = require('@zeit/next-bundle-analyzer');
+
 const config = require('./config');
 
 const configs = {
@@ -54,8 +59,12 @@ if(typeof require!=='undefined'){
 
 
 //如果引用多个包，这里可以连环调用eg：withLess（withCss({})）
-module.exports = withCss(
+module.exports = withBundleAnalyzer(withCss(
     {
+        webpack(config) {
+            config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))//搜索跟localk有关的文件，进行忽略
+            return config
+        },
         env:{
             customKey:'value'
         },
@@ -69,6 +78,18 @@ module.exports = withCss(
             GITHUB_OAUTH_URL:config.GITHUB_OAUTH_URL,
             OAUTH_URL:config.OAUTH_URL
         },// 这里配置了之后才会生效
-
+        analyzeBrowser:['browser','both'].includes(process.env.BUNDLE_ANALYZE),
+        bundleAnalyzerConfig:{
+            server:{
+                analyzerMode:'static',
+                reportFilename:'../bundle/server.html'
+            },
+            browser:{
+                server:{
+                    analyzerMode:'static',
+                    reportFilename:'../bundle/client.html'
+                }
+            }
+        }
     }
-);
+));

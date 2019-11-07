@@ -9,6 +9,8 @@ const auth = require('./server/auth');
 const api = require('./server/api');
 //post请求的数据处理；
 const KoaBody = require('koa-body');
+//atob，markdown 转换成文本格式
+const atob = require('atob');
 
 const RedisSessionStore = require('./server/session-store');
 
@@ -19,6 +21,8 @@ const handle = app.getRequestHandler()
 
 //创建redis   client
 const redis = new Redis();
+//设置nodejs 全局增加一个atob方法
+global.atob = atob;
 
 app.prepare().then(() => {
     const server = new Koa();

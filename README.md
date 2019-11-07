@@ -69,3 +69,26 @@ useContext 的参数必须是 context 对象本身：useContext(MyContext)
   set,get设置获取
   
 >
+#### readme渲染
+1.增加atob包，浏览器中window中有atob这个方法，node环境下并没有
+ > 1.yarn add atob<br>
+ > 2.在node，global全局变量下，增加atob，`//设置nodejs 全局增加一个atob方法
+                               global.atob = atob;`
+### 用法
+atob() 方法用于解码使用 base-64 编码的字符串。
+base-64 编码使用方法是 btoa() 。
+window.atob(encodedStr)
+
+atob解决中文乱码：
+`
+function base64T0Utf8(str){
+    return decodeURIComponent(escape(atob(str)))
+}
+`
+#### markdown 样式
+ github-markdown-css
+ 
+#### 打包解析
+ 
+ @zeit/next-bundle-analyzer
+ 
