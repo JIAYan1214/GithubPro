@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
             const props = await Document.getInitialProps(ctx);
             return { 
                 ...props,
-                styles:<>{props.styles}{styleSheet.getStyleElement()}</>
+                styles:(<>{props.styles}{styleSheet.getStyleElement()}</>)
              }
         }finally{
             styleSheet.seal();

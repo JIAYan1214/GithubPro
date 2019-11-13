@@ -6,15 +6,22 @@
  * 3.使用componentDidCatch自定义处理错误
  * 4.注入额外数据到页面里 (如 GraphQL 查询)
  */
-import App,{Container} from 'next/app';
+import App ,{Container} from 'next/app';
 import React from 'react';
-import Layout from '../components/Layout';
+import  {Provider} from 'react-redux';
+import Router from 'next/router';
+
+import LayoutWrapper from '../components/Layout';
+import WithRedux from '../lib/with-redux';
+import PageLoading from '../components/PageLoading';
 
 import 'antd/dist/antd.css';
 
-class MyApp extends App{
+class MyApp extends App {
     //每次页面切换都执行此方法
-    static async getInitialProps({Component,router,ctx}){
+    static async getInitialProps(ctx){
+        console.log('---app init----');
+        const {Component} = ctx;
         let pageProps={};
         if(Component.getInitialProps){
             pageProps = await Component.getInitialProps(ctx);
@@ -22,16 +29,46 @@ class MyApp extends App{
         return {pageProps};
     }
 
-    render(){
-        const { Component,pageProps } = this.props;
+    state={
+        loading:false
+    }
+
+    starLoading=()=>{
+        this.setState({
+            loading:true
+        })
+    }
+    stopLoading=()=>{
+        this.setState({
+            loading:false
+        })
+    }
+    componentDidMount(){
+        Router.events.on('routeChangeStart',this.starLoading);
+        Router.events.on('routeChangeComplete',this.stopLoading);
+        Router.events.on('routeChangeError',this.stopLoading);
+    }
+    componentWillUnmount(){
+        Router.events.off('routeChangeStart',this.stopLoading);
+        Router.events.off('routeChangeComplete',this.stopLoading);
+        Router.events.off('routeChangeError',this.stopLoading);
+    }
+
+    render() {
+        const {Component, pageProps,reduxStore} = this.props;
         return (
             <Container>
-                <Layout>
-                    <Component {...pageProps}/>
-                </Layout>
+                <Provider store={reduxStore}>
+                    {
+                        this.state.loading ? <PageLoading/> :null
+                    }
+                    <LayoutWrapper>
+                        <Component {...pageProps} />
+                    </LayoutWrapper>
+                </Provider>
+
             </Container>
         )
     }
 }
-
-export default MyApp;
+export default WithRedux(MyApp);
