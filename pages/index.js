@@ -16,7 +16,6 @@ const api = require('../lib/api');
 const {publicRuntimeConfig} = getConfig();
 //判断是否是服务端渲染
 const isServer = typeof window==='undefined';
-
 //缓存数据
 // let cachedUserRepos,cachedUserStarredRepos;
  function Index({userRepos,userStarredRepos,user,router}) {
