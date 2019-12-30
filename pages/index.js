@@ -11,7 +11,6 @@ import {cacheArray} from '../lib/repo-basic-cache';
 const cache = new LRU({
     maxAge:1000*60*10,//缓存10分钟
 })
-
 const api = require('../lib/api');
 const {publicRuntimeConfig} = getConfig();
 //判断是否是服务端渲染
